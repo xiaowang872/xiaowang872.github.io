@@ -1,0 +1,175 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>docker的一些错误与解决方案 | 贵祥</title><meta name="author" content="Gui_xiang"><meta name="copyright" content="Gui_xiang"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="[toc] 引言：查看容器：123456#查看iddocker ps -qa#查看所有docker ps -a#这条命令不会查看nginxdocker ps   删除容器：1docker rm -f &#x27;docker ps -qa&#x27;  重新加载系统服务管理器Systemd的配置文件:1systemctl daemon-reload  正文：错误一：因为复制问题导致文件错位，注释部">
+<meta property="og:type" content="article">
+<meta property="og:title" content="docker的一些错误与解决方案">
+<meta property="og:url" content="http://blog.guixiang.top/posts/37559/index.html">
+<meta property="og:site_name" content="贵祥">
+<meta property="og:description" content="[toc] 引言：查看容器：123456#查看iddocker ps -qa#查看所有docker ps -a#这条命令不会查看nginxdocker ps   删除容器：1docker rm -f &#x27;docker ps -qa&#x27;  重新加载系统服务管理器Systemd的配置文件:1systemctl daemon-reload  正文：错误一：因为复制问题导致文件错位，注释部">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://api.aqcoder.cn/random">
+<meta property="article:published_time" content="2024-03-22T11:41:40.557Z">
+<meta property="article:modified_time" content="2024-03-22T12:28:58.346Z">
+<meta property="article:author" content="Gui_xiang">
+<meta property="article:tag" content="docker排错">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://api.aqcoder.cn/random"><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="http://blog.guixiang.top/posts/37559/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css?v=4.13.0"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.5.1/css/all.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui@5.0.33/dist/fancybox/fancybox.min.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false},
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '天',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid@4.11.1/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'docker的一些错误与解决方案',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2024-03-22 20:28:58'
+}</script><script>(win=>{
+      win.saveToLocal = {
+        set: (key, value, ttl) => {
+          if (ttl === 0) return
+          const now = Date.now()
+          const expiry = now + ttl * 86400000
+          const item = {
+            value,
+            expiry
+          }
+          localStorage.setItem(key, JSON.stringify(item))
+        },
+      
+        get: key => {
+          const itemStr = localStorage.getItem(key)
+      
+          if (!itemStr) {
+            return undefined
+          }
+          const item = JSON.parse(itemStr)
+          const now = Date.now()
+      
+          if (now > item.expiry) {
+            localStorage.removeItem(key)
+            return undefined
+          }
+          return item.value
+        }
+      }
+    
+      win.getScript = (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        script.onerror = reject
+        script.onload = script.onreadystatechange = function() {
+          const loadState = this.readyState
+          if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+          script.onload = script.onreadystatechange = null
+          resolve()
+        }
+
+        Object.keys(attr).forEach(key => {
+          script.setAttribute(key, attr[key])
+        })
+
+        document.head.appendChild(script)
+      })
+    
+      win.getCSS = (url, id = false) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onerror = reject
+        link.onload = link.onreadystatechange = function() {
+          const loadState = this.readyState
+          if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+          link.onload = link.onreadystatechange = null
+          resolve()
+        }
+        document.head.appendChild(link)
+      })
+    
+      win.activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+        if (t === 'dark') activateDarkMode()
+        else if (t === 'light') activateLightMode()
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+      const detectApple = () => {
+        if(/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+          document.documentElement.classList.add('apple')
+        }
+      }
+      detectApple()
+    })(window)</script><meta name="generator" content="Hexo 7.1.1"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src="https://cdn.jsdelivr.net/gh/xiaowang872/blogimage@main/images/favicon.png" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="sidebar-site-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">27</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">22</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">10</div></a></div><hr class="custom-hr"/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 主页</span></a></div><div class="menus_item"><a class="site-page group hide" href="javascript:void(0);"><i class="fa-fw fa fa-sitemap"></i><span> 站点</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" target="_blank" rel="noopener" href="https://www.yuque.com/g/wushi-ls7km/vvnwch/ifpqbuycxhflla9m/collaborator/join?token=D22lKgPZBNY46DIs&amp;source=doc_collaborator"><i class="fa-fw fa fa-paper-plane"></i><span> 这是一个语雀跳转网站</span></a></li><li><a class="site-page child" target="_blank" rel="noopener" href="http://www.guixiang.fun"><i class="fa-fw iconfont icon-Bing"></i><span> 进入大本营</span></a></li><li><a class="site-page child" target="_blank" rel="noopener" href="http://www.guixiang.fun:8443"><i class="fa-fw fa fa-heartbeat"></i><span> 进入harbor</span></a></li><li><a class="site-page child" target="_blank" rel="noopener" href="http://www.guixiang.fun:55551"><i class="fa-fw fa fa-folder"></i><span> 进入vscode</span></a></li></ul></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fa fa-bookmark"></i><span> 博文</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/categories/"><i class="fa-fw fa fa-archive"></i><span> 分类</span></a></li><li><a class="site-page child" href="/tags/"><i class="fa-fw fa fa-tags"></i><span> 标签</span></a></li><li><a class="site-page child" href="/archives/"><i class="fa-fw fa fa-folder-open"></i><span> 归档</span></a></li></ul></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fas fa-list"></i><span> 生活</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/share/"><i class="fa-fw fa fa-share-alt-square"></i><span> 分享</span></a></li><li><a class="site-page child" href="/music/"><i class="fa-fw fa fa-music"></i><span> 音乐</span></a></li><li><a class="site-page child" href="/gallery/"><i class="fa-fw fa fa-images"></i><span> 图库</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/links/"><i class="fa-fw fa fa-link"></i><span> 友链</span></a></div><div class="menus_item"><a class="site-page" target="_blank" rel="noopener" href="https://travellings.cn"><i class="fa-fw fa fa-train"></i><span> 开往</span></a></div><div class="menus_item"><a class="site-page" target="_blank" rel="noopener" href="https://foreverblog.cn/go.html"><i class="fa-fw fa fa-circle"></i><span> 虫洞</span></a></div><div class="menus_item"><a class="site-page" href="/comment/"><i class="fa-fw fa fa-paper-plane"></i><span> 留言板</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-user"></i><span> 关于我</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url('https://api.aqcoder.cn/random')"><nav id="nav"><span id="blog-info"><a href="/" title="贵祥"><img class="site-icon" src="https://cdn.jsdelivr.net/gh/xiaowang872/blogimage@main/images/Screenshot%202024-03-18%20220634.png"/><span class="site-name">贵祥</span></a></span><div id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 主页</span></a></div><div class="menus_item"><a class="site-page group hide" href="javascript:void(0);"><i class="fa-fw fa fa-sitemap"></i><span> 站点</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" target="_blank" rel="noopener" href="https://www.yuque.com/g/wushi-ls7km/vvnwch/ifpqbuycxhflla9m/collaborator/join?token=D22lKgPZBNY46DIs&amp;source=doc_collaborator"><i class="fa-fw fa fa-paper-plane"></i><span> 这是一个语雀跳转网站</span></a></li><li><a class="site-page child" target="_blank" rel="noopener" href="http://www.guixiang.fun"><i class="fa-fw iconfont icon-Bing"></i><span> 进入大本营</span></a></li><li><a class="site-page child" target="_blank" rel="noopener" href="http://www.guixiang.fun:8443"><i class="fa-fw fa fa-heartbeat"></i><span> 进入harbor</span></a></li><li><a class="site-page child" target="_blank" rel="noopener" href="http://www.guixiang.fun:55551"><i class="fa-fw fa fa-folder"></i><span> 进入vscode</span></a></li></ul></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fa fa-bookmark"></i><span> 博文</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/categories/"><i class="fa-fw fa fa-archive"></i><span> 分类</span></a></li><li><a class="site-page child" href="/tags/"><i class="fa-fw fa fa-tags"></i><span> 标签</span></a></li><li><a class="site-page child" href="/archives/"><i class="fa-fw fa fa-folder-open"></i><span> 归档</span></a></li></ul></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fas fa-list"></i><span> 生活</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/share/"><i class="fa-fw fa fa-share-alt-square"></i><span> 分享</span></a></li><li><a class="site-page child" href="/music/"><i class="fa-fw fa fa-music"></i><span> 音乐</span></a></li><li><a class="site-page child" href="/gallery/"><i class="fa-fw fa fa-images"></i><span> 图库</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/links/"><i class="fa-fw fa fa-link"></i><span> 友链</span></a></div><div class="menus_item"><a class="site-page" target="_blank" rel="noopener" href="https://travellings.cn"><i class="fa-fw fa fa-train"></i><span> 开往</span></a></div><div class="menus_item"><a class="site-page" target="_blank" rel="noopener" href="https://foreverblog.cn/go.html"><i class="fa-fw fa fa-circle"></i><span> 虫洞</span></a></div><div class="menus_item"><a class="site-page" href="/comment/"><i class="fa-fw fa fa-paper-plane"></i><span> 留言板</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-user"></i><span> 关于我</span></a></div></div><div id="toggle-menu"><a class="site-page" href="javascript:void(0);"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">docker的一些错误与解决方案</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2024-03-22T11:41:40.557Z" title="发表于 2024-03-22 19:41:40">2024-03-22</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2024-03-22T12:28:58.346Z" title="更新于 2024-03-22 20:28:58">2024-03-22</time></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="docker的一些错误与解决方案"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><p>[toc]</p>
+<h1 id="引言："><a href="#引言：" class="headerlink" title="引言："></a>引言：</h1><h2 id="查看容器："><a href="#查看容器：" class="headerlink" title="查看容器："></a>查看容器：</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">#查看id</span><br><span class="line">docker ps -qa</span><br><span class="line">#查看所有</span><br><span class="line">docker ps -a</span><br><span class="line">#这条命令不会查看nginx</span><br><span class="line">docker ps </span><br></pre></td></tr></table></figure>
+
+<h2 id="删除容器："><a href="#删除容器：" class="headerlink" title="删除容器："></a>删除容器：</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker rm -f &#x27;docker ps -qa&#x27;</span><br></pre></td></tr></table></figure>
+
+<h2 id="重新加载系统服务管理器Systemd的配置文件"><a href="#重新加载系统服务管理器Systemd的配置文件" class="headerlink" title="重新加载系统服务管理器Systemd的配置文件:"></a>重新加载系统服务管理器<code>Systemd</code>的配置文件:</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">systemctl daemon-reload</span><br></pre></td></tr></table></figure>
+
+<h1 id="正文："><a href="#正文：" class="headerlink" title="正文："></a>正文：</h1><h2 id="错误一：因为复制问题导致文件错位，注释部分跑出来了"><a href="#错误一：因为复制问题导致文件错位，注释部分跑出来了" class="headerlink" title="错误一：因为复制问题导致文件错位，注释部分跑出来了"></a>错误一：因为复制问题导致文件错位，注释部分跑出来了</h2><h3 id="解决方案：检查复制部分粘贴是否文本格式混乱"><a href="#解决方案：检查复制部分粘贴是否文本格式混乱" class="headerlink" title="解决方案：检查复制部分粘贴是否文本格式混乱"></a>解决方案：检查复制部分粘贴是否文本格式混乱</h3><h2 id="错误二：nginx容器先于web1-web2前出现"><a href="#错误二：nginx容器先于web1-web2前出现" class="headerlink" title="错误二：nginx容器先于web1,web2前出现"></a>错误二：nginx容器先于web1,web2前出现</h2><p>排错视频点击此链接：</p>
+<p> <a target="_blank" rel="noopener" href="https://www.yuque.com/g/wushi-ls7km/sq639b/dtxkfl4vfinvmasg/collaborator/join?token=U5W5RNEcPskl8e6f&source=doc_collaborator# 《排错视频》" title="超链接title">进入<code>guixiang</code>的身体吧ᕙ(• ॒ ູ•)ᕘ</a></p>
+<p><img src="/./../images/docker01.png" alt="图一"></p>
+<p><img src="/./../images/docker02.png" alt="图二"></p>
+<p><img src="/./../images/docker03.png" alt="图三"></p>
+<h3 id="解决方案："><a href="#解决方案：" class="headerlink" title="解决方案："></a>解决方案：</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">systemctl restart docker</span><br><span class="line">#删除初始化的nginx(初始化nginx的id为lb)</span><br><span class="line">docker rm -f lb</span><br><span class="line">#查看容器是否为空</span><br><span class="line">docker ps -qa</span><br><span class="line">#建立web1，web2</span><br><span class="line">docker run -d -v /root/data/html:/var/www/html --rm --name web1 php:5.6-apache</span><br><span class="line">docker run -d -v /root/data/html:/var/www/html --rm --name web2 php:5.6-apache</span><br><span class="line">#创建nginx容器，注意这里的容器配置将是我们自定义的</span><br><span class="line">#nginx读取/root/data/nginx进行配置</span><br><span class="line">docker run -d --rm --name lb -p 80:80 -v /root/data/nginx:/etc/nginx/conf.d --link web1:web1 --link web2:web2 nginx</span><br></pre></td></tr></table></figure>
+
+<p>这下就可以看<code>php</code>探针了</p>
+<h2 id="开机重开docker的示范：-记得关防火墙"><a href="#开机重开docker的示范：-记得关防火墙" class="headerlink" title="开机重开docker的示范：(记得关防火墙)"></a>开机重开docker的示范：(记得关防火墙)</h2><p>因为重启是系统会丢失原先的docker容器，所以要重新创一次</p>
+<p><img src="/./../images/docker04.png"></p>
+<p><img src="/./../images/docker05.png"></p>
+<p><img src="/./../images/docker06.png"></p>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>文章作者: </span><span class="post-copyright-info"><a href="http://blog.guixiang.top">Gui_xiang</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>文章链接: </span><span class="post-copyright-info"><a href="http://blog.guixiang.top/posts/37559/">http://blog.guixiang.top/posts/37559/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="http://blog.guixiang.top" target="_blank">贵祥</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/docker%E6%8E%92%E9%94%99/">docker排错</a></div><div class="post_share"><div class="social-share" data-image="https://api.aqcoder.cn/random" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.3/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.3/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/posts/4026/" title="docker网盘的搭建(更新中)"><img class="cover" src="https://api.aqcoder.cn/random" onerror="onerror=null;src='/img/404.jpg'" alt="cover of previous post"><div class="pagination-info"><div class="label">上一篇</div><div class="prev_info">docker网盘的搭建(更新中)</div></div></a></div><div class="next-post pull-right"><a href="/posts/48187/" title="虚拟机的docker实验步骤"><img class="cover" src="https://api.aqcoder.cn/random" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">虚拟机的docker实验步骤</div></div></a></div></nav></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src="https://cdn.jsdelivr.net/gh/xiaowang872/blogimage@main/images/favicon.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__name">Gui_xiang</div><div class="author-info__description">分享知识，认识世界</div></div><div class="card-info-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">27</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">22</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">10</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/xiaowang872"><i class="fab fa-github"></i><span>Follow Me</span></a></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">更换了blog主题为butterfly</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%BC%95%E8%A8%80%EF%BC%9A"><span class="toc-number">1.</span> <span class="toc-text">引言：</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%9F%A5%E7%9C%8B%E5%AE%B9%E5%99%A8%EF%BC%9A"><span class="toc-number">1.1.</span> <span class="toc-text">查看容器：</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%88%A0%E9%99%A4%E5%AE%B9%E5%99%A8%EF%BC%9A"><span class="toc-number">1.2.</span> <span class="toc-text">删除容器：</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%87%8D%E6%96%B0%E5%8A%A0%E8%BD%BD%E7%B3%BB%E7%BB%9F%E6%9C%8D%E5%8A%A1%E7%AE%A1%E7%90%86%E5%99%A8Systemd%E7%9A%84%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6"><span class="toc-number">1.3.</span> <span class="toc-text">重新加载系统服务管理器Systemd的配置文件:</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E6%AD%A3%E6%96%87%EF%BC%9A"><span class="toc-number">2.</span> <span class="toc-text">正文：</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%94%99%E8%AF%AF%E4%B8%80%EF%BC%9A%E5%9B%A0%E4%B8%BA%E5%A4%8D%E5%88%B6%E9%97%AE%E9%A2%98%E5%AF%BC%E8%87%B4%E6%96%87%E4%BB%B6%E9%94%99%E4%BD%8D%EF%BC%8C%E6%B3%A8%E9%87%8A%E9%83%A8%E5%88%86%E8%B7%91%E5%87%BA%E6%9D%A5%E4%BA%86"><span class="toc-number">2.1.</span> <span class="toc-text">错误一：因为复制问题导致文件错位，注释部分跑出来了</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88%EF%BC%9A%E6%A3%80%E6%9F%A5%E5%A4%8D%E5%88%B6%E9%83%A8%E5%88%86%E7%B2%98%E8%B4%B4%E6%98%AF%E5%90%A6%E6%96%87%E6%9C%AC%E6%A0%BC%E5%BC%8F%E6%B7%B7%E4%B9%B1"><span class="toc-number">2.1.1.</span> <span class="toc-text">解决方案：检查复制部分粘贴是否文本格式混乱</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%94%99%E8%AF%AF%E4%BA%8C%EF%BC%9Anginx%E5%AE%B9%E5%99%A8%E5%85%88%E4%BA%8Eweb1-web2%E5%89%8D%E5%87%BA%E7%8E%B0"><span class="toc-number">2.2.</span> <span class="toc-text">错误二：nginx容器先于web1,web2前出现</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88%EF%BC%9A"><span class="toc-number">2.2.1.</span> <span class="toc-text">解决方案：</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%BC%80%E6%9C%BA%E9%87%8D%E5%BC%80docker%E7%9A%84%E7%A4%BA%E8%8C%83%EF%BC%9A-%E8%AE%B0%E5%BE%97%E5%85%B3%E9%98%B2%E7%81%AB%E5%A2%99"><span class="toc-number">2.3.</span> <span class="toc-text">开机重开docker的示范：(记得关防火墙)</span></a></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/posts/28504/" title="wordpress站点转移"><img src="https://cdn.jsdelivr.net/gh/xiaowang872/blogimage@main/images/QQ%E6%88%AA%E5%9B%BE20240713105601.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="wordpress站点转移"/></a><div class="content"><a class="title" href="/posts/28504/" title="wordpress站点转移">wordpress站点转移</a><time datetime="2024-07-13T02:16:11.000Z" title="发表于 2024-07-13 10:16:11">2024-07-13</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/posts/60106/" title="docker无法安装而需要的换源需求："><img src="https://cdn.jsdelivr.net/gh/xiaowang872/blogimage@main/images/QQ%E6%88%AA%E5%9B%BE20240708170659.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="docker无法安装而需要的换源需求："/></a><div class="content"><a class="title" href="/posts/60106/" title="docker无法安装而需要的换源需求：">docker无法安装而需要的换源需求：</a><time datetime="2024-07-08T09:16:11.000Z" title="发表于 2024-07-08 17:16:11">2024-07-08</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/posts/4057/" title="解决yum下载报错"><img src="https://cdn.jsdelivr.net/gh/xiaowang872/blogimage@main/images/QQ%E6%88%AA%E5%9B%BE20240702173901.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="解决yum下载报错"/></a><div class="content"><a class="title" href="/posts/4057/" title="解决yum下载报错">解决yum下载报错</a><time datetime="2024-07-02T09:30:22.000Z" title="发表于 2024-07-02 17:30:22">2024-07-02</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/posts/53876/" title="大二下英语课后词汇题汇总"><img src="https://cdn.jsdelivr.net/gh/xiaowang872/blogimage@main/images/5c78b68a53ae451df1787f6e2105a1ec_1332597303243430727.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="大二下英语课后词汇题汇总"/></a><div class="content"><a class="title" href="/posts/53876/" title="大二下英语课后词汇题汇总">大二下英语课后词汇题汇总</a><time datetime="2024-06-03T14:16:11.000Z" title="发表于 2024-06-03 22:16:11">2024-06-03</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/posts/51073/" title="mysql的DDL与DCL与DML与DQL"><img src="https://cdn.jsdelivr.net/gh/xiaowang872/blogimage@main/images/QQ%E6%88%AA%E5%9B%BE20240524234051.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="mysql的DDL与DCL与DML与DQL"/></a><div class="content"><a class="title" href="/posts/51073/" title="mysql的DDL与DCL与DML与DQL">mysql的DDL与DCL与DML与DQL</a><time datetime="2024-05-24T15:45:21.000Z" title="发表于 2024-05-24 23:45:21">2024-05-24</time></div></div></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2020 - 2024 By Gui_xiang</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js?v=4.13.0"></script><script src="/js/main.js?v=4.13.0"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui@5.0.33/dist/fancybox/fancybox.umd.min.js"></script><div class="js-pjax"></div><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>
